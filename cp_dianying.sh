@@ -7,7 +7,6 @@ while [ -h "$Source"  ]; do
     Source="$(readlink "$Source")"
     [[ $Source != /*  ]] && Source="$dir_file/$Source"
 done
-
 dir_file="$( cd -P "$( dirname "$Source"  )" && pwd  )"
 red="\033[31m"
 green="\033[32m"
@@ -16,16 +15,12 @@ white="\033[0m"
 
 #企业微信
 weixin_line="------------------------------------------------"
-
 wrap="%0D%0A%0D%0A" #Server酱换行
 wrap_tab="     "
 current_time=$(date +"%Y-%m-%d")
-by="#### 脚本仓库地址:https://github.com/ITdesk01/Checkjs"
 
 #推送log日志到server酱的时间
 push_server_time="22"
-
-
 red="\033[31m"
 green="\033[32m"
 yellow="\033[33m"
@@ -33,8 +28,10 @@ white="\033[0m"
 
 
 start() {
-
 cat > $dir_file/tmp/dianying_name.txt <<EOF
+	电影	Y:\video\电影
+	香港三级	Y:\video\香港三级
+	动漫电影	Y:\video\动漫电影
 	回铭之烽火三月	Y:\video\动漫\回铭之烽火三月\S01
 	原来我早就无敌了	Y:\video\动漫\原来我早就无敌了\S02
 	正邪	Y:\video\动漫\正邪\S01
@@ -53,7 +50,6 @@ cat > $dir_file/tmp/dianying_name.txt <<EOF
 	一念永恒		Y:\video\动漫\一念永恒\S03
 	刺客伍六七	Y:\video\动漫\刺客伍六七\S05
 EOF
-
 cat > $dir_file/tmp/dianying_rename.txt <<EOF
 	回铭之烽火三月	S01
 	原来我早就无敌了	S02
@@ -63,11 +59,66 @@ cat > $dir_file/tmp/dianying_rename.txt <<EOF
 	宗门里除了我都是卧底	S01
 EOF
 
-i=0
-while true
-do
-	for dianying_name in `cat $dir_file/tmp/dianying_name.txt | awk '{print $1}'`
+	
+	i=0
+	while true
 	do
+		for dianying_name in `cat $dir_file/tmp/dianying_name.txt | awk '{print $1}'`
+		do
+			pan_path=$(echo "${dir_file}:" | sed "s/\/drives\///g" | sed "s/:/:\//" |sed "s/\//\\\\\\\/g")
+			file_path=$(cat $dir_file/tmp/dianying_name.txt | grep "$dianying_name" | awk '{print $2$3}'| sed "s/\\\/\\\\\\\/g")
+			case "$dianying_name" in
+				电影|动漫电影|香港三级)
+				dianying
+				read a
+				;;
+				*)
+				dianshiju
+				;;
+			esac
+		done
+		
+	
+				
+		i=$(expr $i + 1) 
+		time="7200"
+		echo "----------------------------------------"
+		echo "开始第$i次循环，$time秒下次执行"
+		echo "----------------------------------------"
+		
+		sleep $time
+	done
+}
+
+dianying() {
+	ls -A $dir_file/$dianying_name >$dir_file/tmp/dianying_file.txt
+	dianying_file_num=$(cat $dir_file/tmp/dianying_file.txt | wc -l)
+	if [ `cat $dir_file/tmp/dianying_file.txt | wc -l ` -ge "1" ];then
+		dianying_file_count="1"
+		while [ "$dianying_file_num" -ge "$dianying_file_count" ]
+		do
+			dianying_file_name=$(cat $dir_file/tmp/dianying_file.txt | sed -n "${dianying_file_count}p")
+			dianying_file_name_sort=$(echo "$dianying_file_name" |awk -F "." '{print $1}')
+			
+			
+			if [  -e "$dir_file/$dianying_name/$dianying_file_name" ];then
+				copy_file
+			else
+				cmd /c mkdir $dir_file/$dianying_name/$dianying_file_name_sort
+				cmd /c move $dir_file/$dianying_name/$dianying_file_name $dir_file/$dianying_name/$dianying_file_name_sort/
+				copy_file
+			fi
+			read a
+		done
+		
+	else
+		echo "没有发现$dianying_name里面有新文件"
+	fi
+}
+
+
+
+dianshiju() {
 		if [ -e $dir_file/$dianying_name ];then
 			echo "》$dir_file/$dianying_name 文件夹存在"
 			
@@ -80,10 +131,7 @@ do
 				if [ "$aria2_if" == "aria2" ];then
 					echo "》》》检测到 $dir_file/$dianying_name 有未下载好的aria2，暂时不处理"
 				else
-					pan_path=$(echo "${dir_file}:" | sed "s/\/drives\///g" | sed "s/:/:\//" |sed "s/\//\\\\\\\/g")
-
-					file_path=$(cat $dir_file/tmp/dianying_name.txt | grep "$dianying_name" | awk '{print $2$3}'| sed "s/\\\/\\\\\\\/g")				
-
+		
 					#对某些剧进行命名更新
 					dianying_rename=$(cat $dir_file/tmp/dianying_rename.txt | grep "$dianying_name" )
 					dianying_rename1=$(echo "$dianying_rename" | awk '{print $1}')
@@ -132,14 +180,23 @@ do
 					
 					fi
 					
+					copy_file
+				fi
+			fi
 					
+		else
+			echo "》$dir_file/$dianying_name 文件夹不存在"
+		fi
+	
+}
+
+copy_file() {
 					echo "》》》开始复制$pan_path$dianying_name 到 $file_path"
 					echo "##《$dianying_name》新增 " >>$dir_file/tmp/new_file.txt
 					echo "$(ls -A $dir_file/$dianying_name |sed "s/$/\n/g" | sed '/^$/d')" >>$dir_file/tmp/new_file.txt
 					
 					cmd.exe  /c xcopy "$pan_path$dianying_name" "$file_path" /E /I /Y 
-
-					cmd.exe  /c rd $pan_path$dianying_name /S /Q
+					#cmd.exe  /c rd $pan_path$dianying_name /S /Q
 					
 					#开始判断文件是否新增，推送给手机
 					new_file="$dir_file/tmp/new_file.txt"
@@ -161,34 +218,16 @@ do
 							echo "" >$dir_file/tmp/old_file.txt
 						fi
 					fi
-				fi
-			fi
-		else
-			echo "》$dir_file/$dianying_name 文件夹不存在"
-		fi
-	done
-				
-		i=$(expr $i + 1) 
-		time="7200"
-		echo "----------------------------------------"
-		echo "开始第$i次循环，$time秒下次执行"
-		echo "----------------------------------------"
-		
-		sleep $time
-done
+			
+
 }
 
 
 weixin_push() {
-
-
 current_time=$(date +%s)
 expireTime="7200"
-
-
+weixinkey=$(cat $dir_file/weixinkey.txt)
 weixin_file="$dir_file/tmp/weixin_token.txt"
-
-
 #企业名
 corpid=$(echo $weixinkey | awk -F "," '{print $1}')
 #自建应用，单独的secret
@@ -199,11 +238,7 @@ touser=$(echo $weixinkey | awk -F "," '{print $3}')
 agentid=$(echo $weixinkey | awk -F "," '{print $4}')
 #图片id
 media_id=$(echo $weixinkey | awk -F "," '{print $5}')
-
 time_before=$(cat $weixin_file |grep "$corpsecret" | awk '{print $4}')
-
-
-
 if [ ! $time_before ];then
 	#获取access_token
 	access_token=$(curl "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=${corpid}&corpsecret=${corpsecret}" | sed "s/,/\n/g" | grep "access_token" | awk -F ":" '{print $2}' | sed "s/\"//g")
@@ -222,7 +257,6 @@ else
 		access_token=$(cat $weixin_file |grep "$corpsecret" | awk '{print  $3}')
 	fi
 fi
-
 if [ ! $media_id ];then
 	msg_body="{\"touser\":\"$touser\",\"agentid\":$agentid,\"msgtype\":\"text\",\"text\":{\"content\":\"$title\n$weixin_desp\"}}"
 else
@@ -230,14 +264,10 @@ else
 fi
 	echo -e "$green 企业微信开始推送$title$white"
 	curl -s "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=$access_token" -d "$msg_body"
-
 	if [[ $? -eq 0 ]]; then
 		echo -e "$green 企业微信推送成功$title$white"
 	else
 		echo -e "$red 企业微信推送失败。请检查报错代码$title$white"
 	fi
-
 }
-
 start
-
