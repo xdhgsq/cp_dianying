@@ -66,11 +66,9 @@ EOF
 		for dianying_name in `cat $dir_file/tmp/dianying_name.txt | awk '{print $1}'`
 		do
 			pan_path=$(echo "${dir_file}:" | sed "s/\/drives\///g" | sed "s/:/:\//" |sed "s/\//\\\\\\\/g")
-			file_path=$(cat $dir_file/tmp/dianying_name.txt | grep "$dianying_name" | awk '{print $2$3}'| sed "s/\\\/\\\\\\\/g")
 			case "$dianying_name" in
 				电影|动漫电影|香港三级)
 				dianying
-				read a
 				;;
 				*)
 				dianshiju
@@ -91,28 +89,53 @@ EOF
 }
 
 dianying() {
-	ls -A $dir_file/$dianying_name >$dir_file/tmp/dianying_file.txt
-	dianying_file_num=$(cat $dir_file/tmp/dianying_file.txt | wc -l)
-	if [ `cat $dir_file/tmp/dianying_file.txt | wc -l ` -ge "1" ];then
-		dianying_file_count="1"
-		while [ "$dianying_file_num" -ge "$dianying_file_count" ]
-		do
-			dianying_file_name=$(cat $dir_file/tmp/dianying_file.txt | sed -n "${dianying_file_count}p")
-			dianying_file_name_sort=$(echo "$dianying_file_name" |awk -F "." '{print $1}')
-			
-			
-			if [  -e "$dir_file/$dianying_name/$dianying_file_name" ];then
-				copy_file
-			else
-				cmd /c mkdir $dir_file/$dianying_name/$dianying_file_name_sort
-				cmd /c move $dir_file/$dianying_name/$dianying_file_name $dir_file/$dianying_name/$dianying_file_name_sort/
-				copy_file
-			fi
-			read a
-		done
-		
+	if [ -e $dir_file/$dianying_name ];then
+		echo "》$dir_file/$dianying_name 文件夹存在"
+		ls -A $dir_file/$dianying_name >$dir_file/tmp/dianying_file.txt
+		dianying_file_num=$(cat $dir_file/tmp/dianying_file.txt | wc -l)
+		if [ `cat $dir_file/tmp/dianying_file.txt | wc -l ` -ge "1" ];then
+			echo "》》发现$dianying_name里面有新文件"
+			dianying_file_count="1"
+			while [ "$dianying_file_num" -ge "$dianying_file_count" ]
+			do
+				dianying_file_name=$(cat $dir_file/tmp/dianying_file.txt | sed -n "${dianying_file_count}p")
+				dianying_file_name_sort=$(echo "$dianying_file_name" |awk -F "." '{print $1}')
+				
+				#将电影放到文件夹里面
+				if [ ! -d "$dir_file/$dianying_name/$dianying_file_name" ];then
+					if [ `$dir_file/$dianying_name/$dianying_file_name | grep -o "aria2" | sort -u`	== "aria2" ];then
+						echo "》》》检测到 $dianying_file_name 是aria2文件，暂时不处理"
+					else
+						echo "$dianying_file_name 不是文件夹，开始创建"
+						cmd /c mkdir "$pan_path\\$dianying_name\\$dianying_file_name_sort"
+						cmd /c move "$pan_path\\$dianying_name\\$dianying_file_name" "$pan_path\\$dianying_name\\$dianying_file_name_sort"
+					fi
+					
+				fi
+				
+				#判断文件夹里面带不带aria2
+				aria2_if=$(ls -A "$dir_file/$dianying_name/$dianying_file_name" | grep -o "aria2" | sort -u)
+				if [ "$aria2_if" == "aria2" ];then
+					echo "》》》检测到 $dir_file/$dianying_name/$dianying_file_name 有未下载好的aria2，暂时不处理"
+				else
+					#判断文件夹是否为空
+					if [[ -z $(ls -A "$dir_file/$dianying_name/$dianying_file_name") ]];then
+						echo "》》》检测到 $dir_file/$dianying_name/$dianying_file_name 文件夹为空，暂时不处理"
+					else
+						dianying_if="1"
+						title="$dianying_name $dianying_file_name新增"
+						copy_file
+					fi
+					
+				fi
+				dianying_file_count=$(expr $dianying_file_count + 1)
+				
+			done
+		else
+			echo "》》没有发现$dianying_name里面有新文件"
+		fi
 	else
-		echo "没有发现$dianying_name里面有新文件"
+		echo "》$dir_file/$dianying_name 文件夹不存在"
 	fi
 }
 
@@ -131,7 +154,7 @@ dianshiju() {
 				if [ "$aria2_if" == "aria2" ];then
 					echo "》》》检测到 $dir_file/$dianying_name 有未下载好的aria2，暂时不处理"
 				else
-		
+					file_path=$(cat $dir_file/tmp/dianying_name.txt | grep "$dianying_name" | awk '{print $2$3}'| sed "s/\\\/\\\\\\\/g")
 					#对某些剧进行命名更新
 					dianying_rename=$(cat $dir_file/tmp/dianying_rename.txt | grep "$dianying_name" )
 					dianying_rename1=$(echo "$dianying_rename" | awk '{print $1}')
@@ -179,7 +202,7 @@ dianshiju() {
 					
 					
 					fi
-					
+					title="$dianying_name 新增"
 					copy_file
 				fi
 			fi
@@ -191,12 +214,28 @@ dianshiju() {
 }
 
 copy_file() {
-					echo "》》》开始复制$pan_path$dianying_name 到 $file_path"
-					echo "##《$dianying_name》新增 " >>$dir_file/tmp/new_file.txt
-					echo "$(ls -A $dir_file/$dianying_name |sed "s/$/\n/g" | sed '/^$/d')" >>$dir_file/tmp/new_file.txt
+					if [ "$dianying_if" == "1" ];then
+						#检测到电影
+						
+						dianying_dir=$(echo "$pan_path$dianying_name$dianying_file_name" | sed "s/$dianying_name/$dianying_name\\\\\\\/g")
+						file_path=$(cat $dir_file/tmp/dianying_name.txt | grep "$dianying_name" |sed -n "1p" | awk '{print $2$3}'| sed "s/\\\/\\\\\\\/g" |sed "s/$dianying_name/$dianying_name\\\\\\\/g" | sed "s/$/$dianying_file_name/g")
+						echo "》》》开始复制$dianying_dir 到 $file_path"
+						echo "##《$dianying_file_name》新增 " >>$dir_file/tmp/new_file.txt
+						echo "$(ls -A "$dianying_dir" | sed "s/$/\n/g" | sed '/^$/d')" >>$dir_file/tmp/new_file.txt
+						cat $dir_file/tmp/new_file.txt| sed "s/【//g"|  sed "s/】//g" | sed "s/\[//g" |sed "s/\]//g" |sed "s/：//g" > $dir_file/tmp/new_file.txt
+						cmd /c mkdir "$file_path"
+						cmd /c xcopy "$dianying_dir" "$file_path" /E /Y
+						cmd.exe /c rd "$dianying_dir" /S /Q
+					else
+						#检测到其他
+						echo "》》》开始复制$pan_path$dianying_name 到 $file_path"
+						echo "##《$dianying_name》新增 "  >>$dir_file/tmp/new_file.txt
+						echo "$(ls -A "$dir_file/$dianying_name" |sed "s/$/\n/g" | sed '/^$/d')"  >>$dir_file/tmp/new_file.txt
+						cat $dir_file/tmp/new_file.txt| sed "s/【//g"|  sed "s/】//g" | sed "s/\[//g" |sed "s/\]//g" |sed "s/：//g" > $dir_file/tmp/new_file.txt
+						cmd.exe  /c xcopy "$pan_path$dianying_name" "$file_path" /E /I /Y 
+						cmd.exe  /c rd "$pan_path$dianying_name" /S /Q
+					fi
 					
-					cmd.exe  /c xcopy "$pan_path$dianying_name" "$file_path" /E /I /Y 
-					#cmd.exe  /c rd $pan_path$dianying_name /S /Q
 					
 					#开始判断文件是否新增，推送给手机
 					new_file="$dir_file/tmp/new_file.txt"
@@ -205,14 +244,13 @@ copy_file() {
 					if [ -e "$new_file" ];then
 						if [ -e "$old_file" ];then
 							grep -vwf $old_file $new_file > $add_file
-							
+
+							cat $new_file >$old_file
 							if [ ! `cat $add_file | wc -l` == "0" ];then
-								title="$dianying_name 新增"
+								
 								weixin_content=$(cat $add_file |grep -v "##" | sed "s/^/<br>/g" |sed ':t;N;s/\n//;b t')
 								weixin_desp=$(echo "$weixin_content" | sed "s/<hr\/><b>/$weixin_line\n/g" |sed "s/<hr\/><\/b>/\n$weixin_line\n/g"| sed "s/<b>/\n/g"| sed "s/<br>/\n/g" | sed "s/<br><br>/\n/g" | sed "s/#/\n/g" )
-								weixin_push
-								cat $new_file >$old_file
-								
+								weixin_push	
 							fi
 						else
 							echo "" >$dir_file/tmp/old_file.txt
