@@ -29,6 +29,7 @@ white="\033[0m"
 
 start() {
 cat > $dir_file/tmp/dianying_name.txt <<EOF
+	赘婿		Y:\video\动漫\赘婿\S02
 	日月同错	Y:\video\动漫\日月同错\S01
 	电影	Y:\video\电影
 	香港三级	Y:\video\香港三级
@@ -91,11 +92,11 @@ EOF
 }
 
 dianying() {
-	if [ -e $dir_file/$dianying_name ];then
+	if [[ -e $dir_file/$dianying_name ]];then
 		echo "》$dir_file/$dianying_name 文件夹存在"
 		ls -A $dir_file/$dianying_name >$dir_file/tmp/dianying_file.txt
 		dianying_file_num=$(cat $dir_file/tmp/dianying_file.txt | wc -l)
-		if [ `cat $dir_file/tmp/dianying_file.txt | wc -l ` -ge "1" ];then
+		if [[ `cat $dir_file/tmp/dianying_file.txt | wc -l ` -ge "1" ]];then
 			echo "》》发现$dianying_name里面有新文件"
 			dianying_file_count="1"
 			while [ "$dianying_file_num" -ge "$dianying_file_count" ]
@@ -104,31 +105,31 @@ dianying() {
 				dianying_file_name_sort=$(echo "$dianying_file_name" |awk -F "." '{print $1}')
 				
 				#将电影放到文件夹里面
-				if [ ! -d "$dir_file/$dianying_name/$dianying_file_name" ];then
-					if [ `$dir_file/$dianying_name/$dianying_file_name | grep -o "aria2" | sort -u`	== "aria2" ];then
+				if [[ ! -d "$dir_file/$dianying_name/$dianying_file_name" ]];then
+					#先判断是否为文件夹，如果不是文件夹，判断一下是否为aria2文件
+					if [[ `echo "$dir_file/$dianying_name/$dianying_file_name" | grep -o "aria2" | sort -u` == "aria2" ]];then
 						echo "》》》检测到 $dianying_file_name 是aria2文件，暂时不处理"
 					else
 						echo "$dianying_file_name 不是文件夹，开始创建"
 						cmd /c mkdir "$pan_path\\$dianying_name\\$dianying_file_name_sort"
 						cmd /c move "$pan_path\\$dianying_name\\$dianying_file_name" "$pan_path\\$dianying_name\\$dianying_file_name_sort"
 					fi
-					
-				fi
-				
-				#判断文件夹里面带不带aria2
-				aria2_if=$(ls -A "$dir_file/$dianying_name/$dianying_file_name" | grep -Eo "aria2|xltd" | sort -u)
-				if [ "$aria2_if" == "aria2" ];then
-					echo "》》》检测到 $dir_file/$dianying_name/$dianying_file_name 有未下载好的$aria2_if，暂时不处理"
-				elif [ "$aria2_if" == "xltd" ];then
-					echo "》》》检测到 $dir_file/$dianying_name/$dianying_file_name 有未下载好的$aria2_if，暂时不处理"
 				else
-					#判断文件夹是否为空
-					if [[ -z $(ls -A "$dir_file/$dianying_name/$dianying_file_name") ]];then
-						echo "》》》检测到 $dir_file/$dianying_name/$dianying_file_name 文件夹为空，暂时不处理"
+					#判断文件夹里面带不带aria2
+					aria2_if=$(ls -A "$dir_file/$dianying_name/$dianying_file_name" | grep -Eo "aria2|xltd" | sort -u)
+					if [[ "$aria2_if" == "aria2" ]];then
+						echo "》》》检测到 $dir_file/$dianying_name/$dianying_file_name 有未下载好的$aria2_if，暂时不处理"
+					elif [[ "$aria2_if" == "xltd" ]];then
+						echo "》》》检测到 $dir_file/$dianying_name/$dianying_file_name 有未下载好的$aria2_if，暂时不处理"
 					else
-						dianying_if="1"
-						title="$dianying_name $dianying_file_name新增"
-						copy_file
+						#判断文件夹是否为空
+						if [[ -z $(ls -A "$dir_file/$dianying_name/$dianying_file_name") ]];then
+							echo "》》》检测到 $dir_file/$dianying_name/$dianying_file_name 文件夹为空，暂时不处理"
+						else
+							dianying_if="1"
+							title="$dianying_name新增《$dianying_file_name》 "
+							copy_file
+						fi
 					fi
 					
 				fi
@@ -146,7 +147,7 @@ dianying() {
 
 
 dianshiju() {
-		if [ -e $dir_file/$dianying_name ];then
+		if [[ -e $dir_file/$dianying_name ]];then
 			echo "》$dir_file/$dianying_name 文件夹存在"
 			
 			#开始判断文件是否为空
@@ -155,9 +156,9 @@ dianshiju() {
 			else
 				#开始判断文件是否存在未下载完成的文件
 				aria2_if=$(ls -A $dir_file/$dianying_name | grep -Eo "aria2|xltd" | sort -u)
-				if [ "$aria2_if" == "aria2" ];then
+				if [[ "$aria2_if" == "aria2" ]];then
 					echo "》》》检测到 $dir_file/$dianying_name 有未下载好的$aria2_if，暂时不处理"
-				elif [ "$aria2_if" == "xltd" ];then
+				elif [[ "$aria2_if" == "xltd" ]];then
 					echo "》》》检测到 $dir_file/$dianying_name 有未下载好的$aria2_if，暂时不处理"
 				else
 					file_path=$(cat $dir_file/tmp/dianying_name.txt | grep "$dianying_name" | awk '{print $2$3}'| sed "s/\\\/\\\\\\\/g")
@@ -167,9 +168,9 @@ dianshiju() {
 					dianying_rename2=$(echo "$dianying_rename" | awk '{print $2}')
 					dianying_rename3=$(echo "$dianying_rename" | awk '{print $3}')
 					dianying_rename3_grep=$(echo $dianying_rename3| grep -o "txt")
-					if [ "$dianying_rename1" == "$dianying_name" ];then
+					if [[ "$dianying_rename1" == "$dianying_name" ]];then
 					
-						if [ "$dianying_rename3_grep" == "txt" ];then
+						if [[ "$dianying_rename3_grep" == "txt" ]];then
 							echo "检测到$dianying_name始对命名规则进行修正"
 							ls -A $dir_file/$dianying_name |sed "s/$/\n/g" | sed '/^$/d' >$dir_file/old_name.txt
 							
@@ -220,49 +221,30 @@ dianshiju() {
 }
 
 copy_file() {
-					if [ "$dianying_if" == "1" ];then
+					if [[ "$dianying_if" == "1" ]];then
 						#检测到电影
 						
 						dianying_dir=$(echo "$pan_path$dianying_name$dianying_file_name" | sed "s/$dianying_name/$dianying_name\\\\\\\/g")
 						file_path=$(cat $dir_file/tmp/dianying_name.txt | grep "$dianying_name" |sed -n "1p" | awk '{print $2$3}'| sed "s/\\\/\\\\\\\/g" |sed "s/$dianying_name/$dianying_name\\\\\\\/g" | sed "s/$/$dianying_file_name/g")
 						echo "》》》开始复制$dianying_dir 到 $file_path"
-						echo "##《$dianying_file_name》新增 " >>$dir_file/tmp/new_file.txt
-						echo "$(ls -A "$dianying_dir" | sed "s/$/\n/g" | sed '/^$/d')" >>$dir_file/tmp/new_file.txt
-						cat $dir_file/tmp/new_file.txt| sed "s/【//g"|  sed "s/】//g" | sed "s/\[//g" |sed "s/\]//g" |sed "s/：//g" > $dir_file/tmp/new_file.txt
+						new_file=$(ls -A "$dir_file/$dianying_name/$dianying_file_name" |sed "s/$/\n/g" | sed '/^$/d'| sed "s/【//g"|  sed "s/】//g" | sed "s/\[//g" |sed "s/\]//g" |sed "s/：//g")
 						cmd /c mkdir "$file_path"
 						cmd /c xcopy "$dianying_dir" "$file_path" /E /Y
 						cmd.exe /c rd "$dianying_dir" /S /Q
 					else
 						#检测到其他
 						echo "》》》开始复制$pan_path$dianying_name 到 $file_path"
-						echo "##《$dianying_name》新增 "  >>$dir_file/tmp/new_file.txt
-						echo "$(ls -A "$dir_file/$dianying_name" |sed "s/$/\n/g" | sed '/^$/d')"  >>$dir_file/tmp/new_file.txt
-						cat $dir_file/tmp/new_file.txt| sed "s/【//g"|  sed "s/】//g" | sed "s/\[//g" |sed "s/\]//g" |sed "s/：//g" > $dir_file/tmp/new_file.txt
+						new_file=$(ls -A "$dir_file/$dianying_name" |sed "s/$/\n/g" | sed '/^$/d'| sed "s/【//g"|  sed "s/】//g" | sed "s/\[//g" |sed "s/\]//g" |sed "s/：//g")
 						cmd.exe  /c xcopy "$pan_path$dianying_name" "$file_path" /E /I /Y 
 						cmd.exe  /c rd "$pan_path$dianying_name" /S /Q
 					fi
 					
-					
 					#开始判断文件是否新增，推送给手机
-					new_file="$dir_file/tmp/new_file.txt"
-					old_file="$dir_file/tmp/old_file.txt"
-					add_file="$dir_file/tmp/add_file.txt"
-					if [ -e "$new_file" ];then
-						if [ -e "$old_file" ];then
-							grep -vwf $old_file $new_file > $add_file
-
-							cat $new_file >$old_file
-							if [ ! `cat $add_file | wc -l` == "0" ];then
-								
-								weixin_content=$(cat $add_file |grep -v "##" | sed "s/^/<br>/g" |sed ':t;N;s/\n//;b t')
-								weixin_desp=$(echo "$weixin_content" | sed "s/<hr\/><b>/$weixin_line\n/g" |sed "s/<hr\/><\/b>/\n$weixin_line\n/g"| sed "s/<b>/\n/g"| sed "s/<br>/\n/g" | sed "s/<br><br>/\n/g" | sed "s/#/\n/g" )
-								weixin_push	
-							fi
-						else
-							echo "" >$dir_file/tmp/old_file.txt
-						fi
+					if [[ ! -z "$new_file" ]];then		
+						weixin_content=$(echo "$new_file" |grep -v "##" | sed "s/^/<br>/g" |sed ':t;N;s/\n//;b t')
+						weixin_desp=$(echo "$weixin_content" | sed "s/<hr\/><b>/$weixin_line\n/g" |sed "s/<hr\/><\/b>/\n$weixin_line\n/g"| sed "s/<b>/\n/g"| sed "s/<br>/\n/g" | sed "s/<br><br>/\n/g" | sed "s/#/\n/g" )
+						weixin_push	
 					fi
-			
 
 }
 
@@ -283,14 +265,14 @@ agentid=$(echo $weixinkey | awk -F "," '{print $4}')
 #图片id
 media_id=$(echo $weixinkey | awk -F "," '{print $5}')
 time_before=$(cat $weixin_file |grep "$corpsecret" | awk '{print $4}')
-if [ ! $time_before ];then
+if [[ ! $time_before ]];then
 	#获取access_token
 	access_token=$(curl "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=${corpid}&corpsecret=${corpsecret}" | sed "s/,/\n/g" | grep "access_token" | awk -F ":" '{print $2}' | sed "s/\"//g")
 	sed -i "/$corpsecret/d" $weixin_file
 	echo "$corpid $corpsecret $access_token `date +%s`" >> $weixin_file
 	echo ">>>刷新access_token成功<<<"
 else
-	if [ $(($current_time - $time_before)) -gt "$expireTime" ];then
+	if [[ $(($current_time - $time_before)) -gt "$expireTime" ]];then
 		#获取access_token
 		access_token=$(curl "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=${corpid}&corpsecret=${corpsecret}" | sed "s/,/\n/g" | grep "access_token" | awk -F ":" '{print $2}' | sed "s/\"//g")
 		sed -i "/$corpsecret/d" $weixin_file
@@ -301,7 +283,7 @@ else
 		access_token=$(cat $weixin_file |grep "$corpsecret" | awk '{print  $3}')
 	fi
 fi
-if [ ! $media_id ];then
+if [[ ! $media_id ]];then
 	msg_body="{\"touser\":\"$touser\",\"agentid\":$agentid,\"msgtype\":\"text\",\"text\":{\"content\":\"$title\n$weixin_desp\"}}"
 else
 	msg_body="{\"touser\":\"$touser\",\"agentid\":$agentid,\"msgtype\":\"mpnews\",\"mpnews\":{\"articles\":[{\"title\":\"$title\",\"thumb_media_id\":\"$media_id\",\"content\":\"$weixin_content\",\"digest\":\"$weixin_desp\"}]}}"
