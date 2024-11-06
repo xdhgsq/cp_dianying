@@ -29,6 +29,7 @@ white="\033[0m"
 
 start() {
 cat > $dir_file/tmp/dianying_name.txt <<EOF
+	日月同错	Y:\video\动漫\日月同错\S01
 	电影	Y:\video\电影
 	香港三级	Y:\video\香港三级
 	动漫电影	Y:\video\动漫电影
@@ -51,6 +52,7 @@ cat > $dir_file/tmp/dianying_name.txt <<EOF
 	刺客伍六七	Y:\video\动漫\刺客伍六七\S05
 EOF
 cat > $dir_file/tmp/dianying_rename.txt <<EOF
+	日月同错	S01
 	回铭之烽火三月	S01
 	原来我早就无敌了	S02
 	正邪	S01	
@@ -114,9 +116,11 @@ dianying() {
 				fi
 				
 				#判断文件夹里面带不带aria2
-				aria2_if=$(ls -A "$dir_file/$dianying_name/$dianying_file_name" | grep -o "aria2" | sort -u)
+				aria2_if=$(ls -A "$dir_file/$dianying_name/$dianying_file_name" | grep -Eo "aria2|xltd" | sort -u)
 				if [ "$aria2_if" == "aria2" ];then
-					echo "》》》检测到 $dir_file/$dianying_name/$dianying_file_name 有未下载好的aria2，暂时不处理"
+					echo "》》》检测到 $dir_file/$dianying_name/$dianying_file_name 有未下载好的$aria2_if，暂时不处理"
+				elif [ "$aria2_if" == "xltd" ];then
+					echo "》》》检测到 $dir_file/$dianying_name/$dianying_file_name 有未下载好的$aria2_if，暂时不处理"
 				else
 					#判断文件夹是否为空
 					if [[ -z $(ls -A "$dir_file/$dianying_name/$dianying_file_name") ]];then
@@ -150,9 +154,11 @@ dianshiju() {
 				echo "》》$dir_file/$dianying_name 文件夹空的"
 			else
 				#开始判断文件是否存在未下载完成的文件
-				aria2_if=$(ls -A $dir_file/$dianying_name | grep -o "aria2" | sort -u)
+				aria2_if=$(ls -A $dir_file/$dianying_name | grep -Eo "aria2|xltd" | sort -u)
 				if [ "$aria2_if" == "aria2" ];then
-					echo "》》》检测到 $dir_file/$dianying_name 有未下载好的aria2，暂时不处理"
+					echo "》》》检测到 $dir_file/$dianying_name 有未下载好的$aria2_if，暂时不处理"
+				elif [ "$aria2_if" == "xltd" ];then
+					echo "》》》检测到 $dir_file/$dianying_name 有未下载好的$aria2_if，暂时不处理"
 				else
 					file_path=$(cat $dir_file/tmp/dianying_name.txt | grep "$dianying_name" | awk '{print $2$3}'| sed "s/\\\/\\\\\\\/g")
 					#对某些剧进行命名更新
