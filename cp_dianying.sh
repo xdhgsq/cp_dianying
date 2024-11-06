@@ -29,7 +29,7 @@ white="\033[0m"
 
 start() {
 cat > $dir_file/tmp/dianying_name.txt <<EOF
-	赘婿		Y:\video\动漫\赘婿\S02
+	赘婿		Y:\video\动漫\赘婿 (2023)\S02
 	日月同错	Y:\video\动漫\日月同错\S01
 	电影	Y:\video\电影
 	香港三级	Y:\video\香港三级
