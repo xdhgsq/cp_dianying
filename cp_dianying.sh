@@ -43,7 +43,7 @@ cat > $dir_file/tmp/dianying_name.txt <<EOF
 	巾帼枭雄之悬崖	Y:\video\电视剧\巾帼枭雄之悬崖\S01
 	来自地狱的法官	Y:\video\电视剧\来自地狱的法官\S01	
 	黑色月光		Y:\video\电视剧\黑色月光\S01
-	仙逆		Y:\video\动漫\仙.逆（2023）\Season 1
+	仙逆		Y:\video\动漫\仙.逆（2023）\S01
 	完美世界		Y:\video\动漫\完美世界\S01
 	师兄啊师兄	Y:\video\动漫\师兄啊师兄（2023）\S02
 	炼气十万年	Y:\video\动漫\炼气十万年\S01
