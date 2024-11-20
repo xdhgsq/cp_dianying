@@ -29,20 +29,22 @@ white="\033[0m"
 
 start() {
 cat > $dir_file/tmp/dianying_name.txt <<EOF
-	赘婿		Y:\video\动漫\赘婿 (2023)\S02
+	海贼王	Y:\video\动漫\海贼王\S22
+	晚酌的流派	Y:\video\电视剧\晚酌的流派\S03
+	徒弟个个是大佬		Y:\video\动漫\徒弟个个是大佬\S01
+	平凡职业造就世界最强	Y:\video\动漫\平凡职业造就世界最强\S03
+	刀剑神域外传	Y:\video\动漫\刀剑神域外传\S02
+	在地下城寻求邂逅是否搞错了什么	Y:\video\动漫\在地下城寻求邂逅是否搞错了什么\S05
+	双城之战		Y:\video\动漫\英雄联盟双城之战(2021)\S02
 	日月同错	Y:\video\动漫\日月同错\S01
 	电影	Y:\video\电影
 	香港三级	Y:\video\香港三级
 	动漫电影	Y:\video\动漫电影
-	回铭之烽火三月	Y:\video\动漫\回铭之烽火三月\S01
 	原来我早就无敌了	Y:\video\动漫\原来我早就无敌了\S02
 	正邪	Y:\video\动漫\正邪\S01
 	宗门里除了我都是卧底	Y:\video\动漫\宗门里除了我都是卧底\S01
 	关于我转生变成史莱姆这档事	Y:\video\动漫\关于我转生变成史莱姆这档事\S03
-	廉政行动		Y:\video\电视剧\廉政行动\S01
-	巾帼枭雄之悬崖	Y:\video\电视剧\巾帼枭雄之悬崖\S01
 	来自地狱的法官	Y:\video\电视剧\来自地狱的法官\S01	
-	黑色月光		Y:\video\电视剧\黑色月光\S01
 	仙逆		Y:\video\动漫\仙.逆（2023）\S01
 	完美世界		Y:\video\动漫\完美世界\S01
 	师兄啊师兄	Y:\video\动漫\师兄啊师兄（2023）\S02
@@ -54,11 +56,9 @@ cat > $dir_file/tmp/dianying_name.txt <<EOF
 EOF
 cat > $dir_file/tmp/dianying_rename.txt <<EOF
 	日月同错	S01
-	回铭之烽火三月	S01
 	原来我早就无敌了	S02
 	正邪	S01	
 	关于我转生变成史莱姆这档事	S03	史莱姆.txt
-	刺客伍六七	S05
 	宗门里除了我都是卧底	S01
 EOF
 
