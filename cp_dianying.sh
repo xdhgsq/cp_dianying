@@ -29,6 +29,8 @@ white="\033[0m"
 
 start() {
 cat > $dir_file/tmp/dianying_name.txt <<EOF
+	都市古仙医		Y:\video\动漫\都市古仙医\S01
+	黑帮的我成了高中生	Y:\video\电视剧\黑帮的我成了高中生\S01
 	海贼王	Y:\video\动漫\海贼王\S22
 	晚酌的流派	Y:\video\电视剧\晚酌的流派\S03
 	徒弟个个是大佬		Y:\video\动漫\徒弟个个是大佬\S01
