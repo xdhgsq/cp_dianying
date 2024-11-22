@@ -29,6 +29,9 @@ white="\033[0m"
 
 start() {
 cat > $dir_file/tmp/dianying_name.txt <<EOF
+	李子柒	Y:\video\电视剧\李子柒\S01
+	大道朝天	Y:\video\动漫\大道朝天\S01
+	长生界	Y:\video\动漫\长生界\S01
 	都市古仙医		Y:\video\动漫\都市古仙医\S01
 	黑帮的我成了高中生	Y:\video\电视剧\黑帮的我成了高中生\S01
 	海贼王	Y:\video\动漫\海贼王\S22
@@ -39,9 +42,6 @@ cat > $dir_file/tmp/dianying_name.txt <<EOF
 	在地下城寻求邂逅是否搞错了什么	Y:\video\动漫\在地下城寻求邂逅是否搞错了什么\S05
 	双城之战		Y:\video\动漫\英雄联盟双城之战(2021)\S02
 	日月同错	Y:\video\动漫\日月同错\S01
-	电影	Y:\video\电影
-	香港三级	Y:\video\香港三级
-	动漫电影	Y:\video\动漫电影
 	原来我早就无敌了	Y:\video\动漫\原来我早就无敌了\S02
 	正邪	Y:\video\动漫\正邪\S01
 	宗门里除了我都是卧底	Y:\video\动漫\宗门里除了我都是卧底\S01
@@ -55,6 +55,10 @@ cat > $dir_file/tmp/dianying_name.txt <<EOF
 	剑来		Y:\video\动漫\剑来 (2024)\S01
 	一念永恒		Y:\video\动漫\一念永恒\S03
 	刺客伍六七	Y:\video\动漫\刺客伍六七\S05
+	电影	Y:\video\电影
+	香港三级	Y:\video\香港三级
+	动漫电影	Y:\video\动漫电影
+	18禁电影	Y:\video\18禁电影
 EOF
 cat > $dir_file/tmp/dianying_rename.txt <<EOF
 	日月同错	S01
@@ -72,7 +76,7 @@ EOF
 		do
 			pan_path=$(echo "${dir_file}:" | sed "s/\/drives\///g" | sed "s/:/:\//" |sed "s/\//\\\\\\\/g")
 			case "$dianying_name" in
-				电影|动漫电影|香港三级)
+				电影|动漫电影|香港三级|18禁电影)
 				dianying
 				;;
 				*)
