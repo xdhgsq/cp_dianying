@@ -29,6 +29,7 @@ white="\033[0m"
 
 start() {
 cat > $dir_file/tmp/dianying_name.txt <<EOF
+	豺狼的日子	Y:\video\电视剧\豺狼的日子\S01
 	李子柒	Y:\video\电视剧\李子柒\S01
 	大道朝天	Y:\video\动漫\大道朝天\S01
 	长生界	Y:\video\动漫\长生界\S01
@@ -37,14 +38,9 @@ cat > $dir_file/tmp/dianying_name.txt <<EOF
 	海贼王	Y:\video\动漫\海贼王\S22
 	晚酌的流派	Y:\video\电视剧\晚酌的流派\S03
 	徒弟个个是大佬		Y:\video\动漫\徒弟个个是大佬\S01
-	平凡职业造就世界最强	Y:\video\动漫\平凡职业造就世界最强\S03
+	平凡世界造就世界最强	Y:\video\动漫\平凡职业造就世界最强\S03
 	刀剑神域外传	Y:\video\动漫\刀剑神域外传\S02
 	在地下城寻求邂逅是否搞错了什么	Y:\video\动漫\在地下城寻求邂逅是否搞错了什么\S05
-	双城之战		Y:\video\动漫\英雄联盟双城之战(2021)\S02
-	日月同错	Y:\video\动漫\日月同错\S01
-	原来我早就无敌了	Y:\video\动漫\原来我早就无敌了\S02
-	正邪	Y:\video\动漫\正邪\S01
-	宗门里除了我都是卧底	Y:\video\动漫\宗门里除了我都是卧底\S01
 	关于我转生变成史莱姆这档事	Y:\video\动漫\关于我转生变成史莱姆这档事\S03
 	来自地狱的法官	Y:\video\电视剧\来自地狱的法官\S01	
 	仙逆		Y:\video\动漫\仙.逆（2023）\S01
@@ -55,6 +51,10 @@ cat > $dir_file/tmp/dianying_name.txt <<EOF
 	剑来		Y:\video\动漫\剑来 (2024)\S01
 	一念永恒		Y:\video\动漫\一念永恒\S03
 	刺客伍六七	Y:\video\动漫\刺客伍六七\S05
+	原来我早就无敌了	Y:\video\动漫\原来我早就无敌了\S02
+	宗门里除了我都是卧底	Y:\video\动漫\宗门里除了我都是卧底\S01
+	正邪	Y:\video\动漫\正邪\S01
+	日月同错	Y:\video\动漫\日月同错\S01
 	电影	Y:\video\电影
 	香港三级	Y:\video\香港三级
 	动漫电影	Y:\video\动漫电影
@@ -215,6 +215,7 @@ dianshiju() {
 					
 					
 					fi
+					dianying_if="0"
 					title="$dianying_name 新增"
 					copy_file
 				fi
